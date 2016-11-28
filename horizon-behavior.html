@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <script>
-    WIRSENS = WIRSENS || {};
+    WIRSENS = window.WIRSENS || {};
 
     /* @polymerBehavior */
     WIRSENS.HorizonBehavior = {
@@ -20,7 +20,8 @@
 
             _horizon: {
                 type: Object,
-                computed: '_computeHorizon(_horizonHost, _horizonPort, isReady)'
+                computed: '_computeHorizon(_horizonHost, _horizonPort, _isReady)',
+                notify: true
             }
         },
 
@@ -30,8 +31,12 @@
 
         _loadLib(host, port) {
             const script = document.createElement('script');
-            script.src = `${host}:${port}/horizon/horizon.js`;
-            debugger
+            script.src = `http://${host}:${port}/horizon/horizon.js`;
+            Polymer.dom(this.root).appendChild(script);
+            
+            script.onload = () => {
+                this._isReady = true;
+            };
         },
 
         _computeHorizon(host, port) {
