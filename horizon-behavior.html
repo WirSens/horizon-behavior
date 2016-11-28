@@ -1,34 +1,34 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="horizon.html">
 
-<!--
-`horizon-behavior`
+<script>
+    WIRSENS = WIRSENS || {};
 
+    /* @polymerBehavior */
+    WIRSENS.HorizonBehavior = {
+        
+        properties: {
+            
+            _horizonHost: {
+                type: String,
+                value: 'localhost'
+            },
 
-@demo demo/index.html 
--->
+            _horizonPort: {
+                type: String,
+                value: '8181'
+            },
 
-<dom-module id="horizon-behavior">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <h2>Hello [[prop1]]</h2>
-  </template>
-
-  <script>
-    Polymer({
-
-      is: 'horizon-behavior',
-
-      properties: {
-        prop1: {
-          type: String,
-          value: 'horizon-behavior',
+            _horizon: {
+                type: Object,
+                computed: '_computeHorizon(_horizonHost, _horizonPort)'
+            }
         },
-      },
 
-    });
-  </script>
-</dom-module>
+        _computeHorizon(host, port) {
+            return Horizon({
+                host: '${host}:${port}'
+            });
+        }  
+    };
+</script>
