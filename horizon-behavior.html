@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="horizon.html">
 
 <script>
     WIRSENS = WIRSENS || {};
@@ -21,13 +20,23 @@
 
             _horizon: {
                 type: Object,
-                computed: '_computeHorizon(_horizonHost, _horizonPort)'
+                computed: '_computeHorizon(_horizonHost, _horizonPort, isReady)'
             }
+        },
+
+        observers: [
+            '_loadLib(_horizonHost, _horizonPort)'
+        ],
+
+        _loadLib(host, port) {
+            const script = document.createElement('script');
+            script.src = `${host}:${port}/horizon/horizon.js`;
+            debugger
         },
 
         _computeHorizon(host, port) {
             return Horizon({
-                host: '${host}:${port}'
+                host: `${host}:${port}`
             });
         }  
     };
