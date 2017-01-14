@@ -8,15 +8,8 @@
         
         properties: {
             
-            _horizonHost: {
-                type: String,
-                value: 'localhost'
-            },
-
-            _horizonPort: {
-                type: String,
-                value: '8181'
-            },
+            _horizonHost: String,
+            _horizonPort: String,
 
             _horizon: {
                 type: Object,
@@ -30,11 +23,11 @@
         ],
 
         ready: function () {
+
             var config = new Polymer.IronMetaQuery().byKey('horizon-config');
-            if (config) {
-                this._horizonHost = config.host;
-                this._horizonPort = config.port;
-            }
+
+            this._horizonHost = !!config ? config.host : 'localhost';
+            this._horizonPort = !!config ? config.port : '8181';
         },
 
         _loadLib: function (host, port) {
