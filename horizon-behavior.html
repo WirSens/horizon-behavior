@@ -29,19 +29,27 @@
             '_loadLib(_horizonHost, _horizonPort)'
         ],
 
-        _loadLib(host, port) {
-            const script = document.createElement('script');
-            script.src = `http://${host}:${port}/horizon/horizon.js`;
+        ready: function () {
+            var config = new Polymer.IronMetaQuery().byKey('horizon-config');
+            if (config) {
+                this._horizonHost = config.host;
+                this._horizonPort = config.port;
+            }
+        },
+
+        _loadLib: function (host, port) {
+            var script = document.createElement('script');
+            script.src = 'http://' + host + ':' + port + '/horizon/horizon.js';
             Polymer.dom(this.root).appendChild(script);
-            
-            script.onload = () => {
+
+            script.onload = function () {
                 this._isReady = true;
             };
         },
 
-        _computeHorizon(host, port) {
+        _computeHorizon: function (host, port) {
             return Horizon({
-                host: `${host}:${port}`
+                host: host + ':' + port
             });
         }  
     };
