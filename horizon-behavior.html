@@ -37,7 +37,7 @@
 
             script.onload = function () {
                 this._isReady = true;
-            };
+            }.bind(this);
         },
 
         _computeHorizon: function (host, port) {
