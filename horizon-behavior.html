@@ -3,6 +3,8 @@
 <script>
     WIRSENS = window.WIRSENS || {};
 
+    var isReady = false;
+
     /* @polymerBehavior */
     WIRSENS.HorizonBehavior = {
         
@@ -32,10 +34,26 @@
 
         _loadLib: function (host, port) {
             var script = document.createElement('script');
-            script.src = 'http://' + host + ':' + port + '/horizon/horizon.js';
-            Polymer.dom(this.root).appendChild(script);
+            script.id = 'horizonScript';
+
+            if (document.querySelector('#horizonScript')) {
+                if (isReady) {
+                    this._isReady = true;
+                }
+                return;
+            }
+
+            var src = host + ':' + port;
+            
+            if (/ngrok.io/.test(location.hostname)) {
+                src = location.hostname.replace('seats', 'horizon');
+            }
+
+            script.src = 'http://' + src + '/horizon/horizon.js';
+            document.head.appendChild(script);
 
             script.onload = function () {
+                isReady = true;
                 this._isReady = true;
             }.bind(this);
         },
