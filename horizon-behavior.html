@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="bower_components/polymer/polymer.html">
 
 <script>
     WIRSENS = window.WIRSENS || {};
@@ -7,9 +7,9 @@
 
     /* @polymerBehavior */
     WIRSENS.HorizonBehavior = {
-        
+
         properties: {
-            
+
             _horizonHost: String,
             _horizonPort: String,
 
@@ -44,7 +44,7 @@
             }
 
             var src = host + ':' + port;
-            
+
             if (/ngrok.io/.test(location.hostname)) {
                 src = location.hostname.replace('seats', 'horizon');
             }
@@ -60,8 +60,8 @@
         },
 
         _computeHorizon: function (host, port) {
-            var hostString = host + ':' + port; 
-            
+            var hostString = host + ':' + port;
+
             if (/ngrok.io/.test(location.hostname)) {
                 hostString = location.hostname.replace('seats', 'horizon');
             }
@@ -69,6 +69,6 @@
             return Horizon({
                 host: hostString
             });
-        }  
+        }
     };
 </script>

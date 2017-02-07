@@ -1,0 +1,103 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./horizon-behavior.html">
+
+<!--
+
+Use `horizon-table` to connect to a table with Horizon. You are then equipped with basic CRUD
+methods, as well as getting the `horizonTable` object back which you can perform more complex
+queries on.
+
+Example:
+
+    - connect to the assets table
+
+    ```html
+        <horizon-table
+            id="assetsTable"
+            table-name="assets"
+        ></horizon-table>
+    ```
+
+    - do some basic crud
+
+    ```js
+        const assetsTable = this.$.assetsTable;
+
+        assetsTable.add({
+            name: 'some new asset'
+        });
+
+        assetsTable.delete(1)
+    ```
+
+    - or complex query
+
+    ```js
+        assetsTable.table
+            .order('index')
+            .watch()
+            .subscribe(function (someAssets) {
+                this.set('orderedAssets', someAssets);
+            }.bind(this));
+    ```
+
+@demo demo/index.html
+-->
+
+<dom-module id="horizon-table">
+
+    <script>
+
+        Polymer({
+
+            is: 'horizon-table',
+
+            behaviors: [
+                WIRSENS.HorizonBehavior
+            ],
+
+            properties: {
+
+                /**
+                 * The table to connect to.
+                 * @type {String}
+                 */
+                tableName: String,
+
+                /**
+                 * The horizon table object.
+                 * @type {Object}
+                 */
+                table: {
+                    type: Object,
+                    notify: true
+                }
+
+            },
+
+            observers: [
+                '_setTable(_horizon, table)'
+            ],
+
+            _setTable: function (horizon, table) {
+                this.set('table', horizon(table));
+            },
+
+            upsert: function (data) {
+                this.table.upsert(data);
+            },
+
+            add: function (data) {
+                this.table.insert(data);
+            },
+
+            delete: function (id) {
+                this.table.remove(id);
+            },
+
+            update: function (data) {
+                this.table.update(data);
+            }
+        });
+    </script>
+</dom-module>
