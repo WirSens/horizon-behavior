@@ -19,7 +19,7 @@
                 notify: true
             },
 
-            _handleLibLoaded: {
+            _libLoadedHandler: {
                 value: function () {
                     return this._handleLibLoaded;
                 }
@@ -37,7 +37,7 @@
             this._horizonHost = !!config ? config.host : 'localhost';
             this._horizonPort = !!config ? config.port : '8181';
 
-            window.addEventListener(this._eventName, this._handleLibLoaded.bind(this));
+            window.addEventListener(this._eventName, this._libLoadedHandler.bind(this));
         },
 
         _handleLibLoaded: function () {
