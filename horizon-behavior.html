@@ -55,13 +55,13 @@
                 this.fire(this._eventName, {}, { node: window });
             }.bind(this);
 
-            var script = document.createElement('script');
-            script.id = 'horizonScript';
-
             if (document.querySelector('#horizonScript')) {
                 scriptLoaded();
                 return;
             }
+
+            var script = document.createElement('script');
+            script.id = 'horizonScript';
 
             var src = host + ':' + port;
 
