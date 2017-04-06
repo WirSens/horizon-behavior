@@ -3,7 +3,7 @@
 <script>
     WIRSENS = window.WIRSENS || {};
 
-    var isReady = false;
+    var isLoading = false;
 
     /* @polymerBehavior */
     WIRSENS.HorizonBehavior = {
@@ -17,6 +17,12 @@
                 type: Object,
                 computed: '_computeHorizon(_horizonHost, _horizonPort, _isReady)',
                 notify: true
+            },
+
+            _handleLibLoaded: {
+                value: function () {
+                    return this._handleLibLoaded;
+                }
             }
         },
 
@@ -24,22 +30,34 @@
             '_loadLib(_horizonHost, _horizonPort)'
         ],
 
-        ready: function () {
-
+        attached: function () {
+            this._eventName = 'wirsens-horizon-script-loaded';
             var config = new Polymer.IronMetaQuery().byKey('horizon-config');
 
             this._horizonHost = !!config ? config.host : 'localhost';
             this._horizonPort = !!config ? config.port : '8181';
+
+            window.addEventListener(this._eventName, this._handleLibLoaded.bind(this));
+        },
+
+        _handleLibLoaded: function () {
+            this._isReady = true;
         },
 
         _loadLib: function (host, port) {
+
+            // check if someone else is loading
+            if (isLoading) {
+                return;
+            }
+
+            // we're first, let's load it
+            isLoading = true;
+
             var script = document.createElement('script');
             script.id = 'horizonScript';
 
             if (document.querySelector('#horizonScript')) {
-                if (isReady) {
-                    this._isReady = true;
-                }
                 return;
             }
 
@@ -49,13 +67,12 @@
                 src = location.hostname.replace('seats', 'horizon');
             }
 
-
             script.src = '//' + src + '/horizon/horizon.js';
             document.head.appendChild(script);
 
             script.onload = function () {
-                isReady = true;
-                this._isReady = true;
+                isLoading = false;
+                this.fire(this._eventName, {}, { node: window });
             }.bind(this);
         },
 
@@ -69,6 +86,10 @@
             return Horizon({
                 host: hostString
             });
+        },
+
+        detached: function () {
+            window.removeEventListener(this._eventName, this._handleLibLoaded);
         }
     };
 </script>
