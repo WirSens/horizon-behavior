@@ -17,12 +17,6 @@
                 type: Object,
                 computed: '_computeHorizon(_horizonHost, _horizonPort, _isReady)',
                 notify: true
-            },
-
-            _libLoadedHandler: {
-                value: function () {
-                    return this._handleLibLoaded;
-                }
             }
         },
 
@@ -37,7 +31,9 @@
             this._horizonHost = !!config ? config.host : 'localhost';
             this._horizonPort = !!config ? config.port : '8181';
 
-            window.addEventListener(this._eventName, this._libLoadedHandler.bind(this));
+            this._libLoadedHandler = this._handleLibLoaded.bind(this);
+
+            window.addEventListener(this._eventName, this._libLoadedHandler);
         },
 
         _handleLibLoaded: function () {
@@ -46,7 +42,7 @@
 
         _loadLib: function (host, port) {
 
-            // check if someone else is loading
+            // check if someone else is loading or if we already loaded the script
             if (isLoading) {
                 return;
             }
@@ -54,10 +50,16 @@
             // we're first, let's load it
             isLoading = true;
 
+            var scriptLoaded = function () {
+                isLoading = false;
+                this.fire(this._eventName, {}, { node: window });
+            }.bind(this);
+
             var script = document.createElement('script');
             script.id = 'horizonScript';
 
             if (document.querySelector('#horizonScript')) {
+                scriptLoaded();
                 return;
             }
 
@@ -70,10 +72,7 @@
             script.src = '//' + src + '/horizon/horizon.js';
             document.head.appendChild(script);
 
-            script.onload = function () {
-                isLoading = false;
-                this.fire(this._eventName, {}, { node: window });
-            }.bind(this);
+            script.onload = scriptLoaded;
         },
 
         _computeHorizon: function (host, port) {
@@ -89,7 +88,7 @@
         },
 
         detached: function () {
-            window.removeEventListener(this._eventName, this._handleLibLoaded);
+            window.removeEventListener(this._eventName, this._libLoadedHandler);
         }
     };
 </script>
