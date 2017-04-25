@@ -40,7 +40,7 @@
 
         _handleLibLoaded: function () {
             this._isReady = true;
-            // we're ready, so we let's not listen to events anymore.
+            // we're ready, so let's not listen to events anymore.
             window.removeEventListener(this._eventName, this._libLoadedHandler);
         },
 
