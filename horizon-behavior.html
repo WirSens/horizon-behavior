@@ -27,17 +27,21 @@
         attached: function () {
             this._eventName = 'wirsens-horizon-script-loaded';
             var config = new Polymer.IronMetaQuery().byKey('horizon-config');
+            
+            // it's crucial that we setup our event listeners first, since setting the
+            // host and port will trigger `_loadLib` which fires an event when the script
+            // has loaded, so we have to be ready and listening!
+            this._libLoadedHandler = this._handleLibLoaded.bind(this);
+            window.addEventListener(this._eventName, this._libLoadedHandler);
 
             this._horizonHost = !!config ? config.host : 'localhost';
             this._horizonPort = !!config ? config.port : '8181';
-
-            this._libLoadedHandler = this._handleLibLoaded.bind(this);
-
-            window.addEventListener(this._eventName, this._libLoadedHandler);
         },
 
         _handleLibLoaded: function () {
             this._isReady = true;
+            // we're ready, so we let's not listen to events anymore.
+            window.removeEventListener(this._eventName, this._libLoadedHandler);
         },
 
         _loadLib: function (host, port) {
